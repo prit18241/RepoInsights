@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RepoInsight &mdash; GitHub Repository Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js dependency -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <header class="hdr">
+    <div class="logo"><div class="logo-box">R</div> RepoInsight</div>
+    <div class="srch">
+      <div class="sf">
+        <span style="color:var(--t3)">&#128269;</span>
+        <input type="text" id="ri" placeholder="owner/repository or GitHub URL"/>
+      </div>
+      <button class="btn-go" id="abtn" onclick="go()">Analyze &rarr;</button>
+    </div>
+    <div class="hdr-r">
+      <button class="th-btn" onclick="switchTheme()">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="sbar">
+      <div class="ng">Repository</div>
+      <button class="nb on" id="n-overview" onclick="nav('overview')"><span class="nb-ic">&#9783;</span> Overview</button>
+      <button class="nb" id="n-health" onclick="nav('health')"><span class="nb-ic">&#10084;</span> Health Score</button>
+      
+      <div class="ng">Code Analysis</div>
+      <button class="nb" id="n-languages" onclick="nav('languages')"><span class="nb-ic">&#9084;</span> Languages</button>
+      <button class="nb" id="n-contributors" onclick="nav('contributors')"><span class="nb-ic">&#128101;</span> Contributors</button>
+      <button class="nb" id="n-commits" onclick="nav('commits')"><span class="nb-ic">&#9895;</span> Commit Activity</button>
+      
+      <div class="ng">Metrics</div>
+      <button class="nb" id="n-issues" onclick="nav('issues')"><span class="nb-ic">&#9888;</span> Issue Analysis</button>
+      
+      <div class="ng">AI Insights</div>
+      <button class="nb" id="n-ai" onclick="nav('ai')"><span class="nb-ic">&#10022;</span> AI Summary</button>
+      <button class="nb" id="n-readme" onclick="nav('readme')"><span class="nb-ic">&#128196;</span> README Analysis</button>
+      
+      <div class="ng">Advanced</div>
+      <button class="nb" id="n-community" onclick="nav('community')"><span class="nb-ic">&#127968;</span> Community</button>
+      <button class="nb" id="n-maintenance" onclick="nav('maintenance')"><span class="nb-ic">&#128295;</span> Maintenance</button>
+      
+      <div class="ng">Tools</div>
+      <button class="nb" id="n-compare" onclick="nav('compare')"><span class="nb-ic">&#9646;</span> Compare</button>
+      <button class="nb" id="n-history" onclick="nav('history')"><span class="nb-ic">&#9676;</span> History <span class="nb-bdg" id="hbdg">0</span></button>
+      <button class="nb" id="n-settings" onclick="nav('settings')"><span class="nb-ic">&#9881;</span> Settings</button>
+    </nav>
+
+    <main class="main" id="mainArea">
+
+      <!-- LANDING VIEW -->
+      <div class="view active" id="vLand">
+        <div class="hero">Analyze any GitHub Repository</div>
+        <p class="hero-sub">Health scores, AI summaries, language breakdowns, contributor rankings &mdash; powered by the GitHub API.</p>
+        <div class="pills">
+          <span class="pill" onclick="qs('facebook/react')">facebook/react</span>
+          <span class="pill" onclick="qs('vercel/next.js')">vercel/next.js</span>
+          <span class="pill" onclick="qs('microsoft/vscode')">microsoft/vscode</span>
+          <span class="pill" onclick="qs('vuejs/vue')">vuejs/vue</span>
+          <span class="pill" onclick="qs('torvalds/linux')">torvalds/linux</span>
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card"><h4>&#9785; Health Score</h4><p>5-dimension composite score</p></div>
+          <div class="feat-card"><h4>&#10022; AI Summary</h4><p>Strengths &amp; recommendations</p></div>
+          <div class="feat-card"><h4>&#128202; Charts</h4><p>Visual analysis for all metrics</p></div>
+          <div class="feat-card"><h4>&#128101; Contributors</h4><p>Rankings &amp; impact bars</p></div>
+          <div class="feat-card"><h4>&#9895; Commit Pulse</h4><p>Weekly &amp; monthly trends</p></div>
+          <div class="feat-card"><h4>&#128196; History</h4><p>Revisit past analyses</p></div>
+        </div>
+      </div>
+
+      <!-- LOADING VIEW -->
+      <div class="view" id="vLoad">
+        <div class="spin"></div>
+        <div class="lsteps" id="lsteps"></div>
+      </div>
+
+      <!-- ERROR VIEW -->
+      <div class="view" id="vErr">
+        <div class="err-ico">&#9888;</div>
+        <div class="err-ttl" id="etitle">Repository Not Found</div>
+        <p class="err-msg" id="emsg">Check the repository name and try again.</p>
+      </div>
+
+      <!-- DASHBOARD VIEW CONTAINER -->
+      <div class="view" id="vDash">
+
+        <!-- OVERVIEW PAGE -->
+        <div class="page active" id="p-overview">
+          <div id="s-rhdr"></div>
+          <div class="mgrid" id="s-omtx"></div>
+          <div class="g2">
+            <div class="card"><div class="ct">Commit Activity &mdash; Last 26 Weeks</div><div class="cw h200"><canvas id="c-caov"></canvas></div></div>
+            <div class="card"><div class="ct">Language Breakdown</div><div class="cw h200"><canvas id="c-lpov"></canvas></div></div>
+          </div>
+          <div class="card" id="s-aiov"></div>
+        </div>
+
+        <!-- HEALTH PAGE -->
+        <div class="page" id="p-health">
+          <div class="ptitle">Health Score</div><p class="psub">Repository health across 5 key dimensions</p>
+          <div class="card"><div id="s-hmain"></div></div>
+          <div class="g2">
+            <div class="card"><div class="ct">Score Breakdown</div><div id="s-hbrkd"></div></div>
+            <div class="card"><div class="ct">Risk Indicators</div><div id="s-risks"></div></div>
+          </div>
+          <div class="card"><div class="ct">Activity Status</div><div id="s-actst"></div></div>
+        </div>
+
+        <!-- LANGUAGES PAGE -->
+        <div class="page" id="p-languages">
+          <div class="ptitle">Language Analysis</div><p class="psub">Code composition and distribution</p>
+          <div class="g2">
+            <div class="card"><div class="ct">Distribution</div><div class="cw h260"><canvas id="c-ldng"></canvas></div><div class="legend" id="s-lgnd"></div></div>
+            <div class="card"><div class="ct">Language Details</div><div id="s-ldtl"></div></div>
+          </div>
+        </div>
+
+        <!-- CONTRIBUTORS PAGE -->
+        <div class="page" id="p-contributors">
+          <div class="ptitle">Contributor Analysis</div><p class="psub">Who is building this repository</p>
+          <div class="mgrid" id="s-cmtx"></div>
+          <div class="card" style="margin-bottom:13px"><div class="ct">Top Contributors</div>
+            <table class="dtbl">
+              <thead><tr><th>#</th><th>User</th><th>Commits</th><th>Share</th><th>Impact</th></tr></thead>
+              <tbody id="s-ctbl"></tbody>
+            </table>
+          </div>
+          <div class="card"><div class="ct">Contributions Chart</div><div class="cw h200"><canvas id="c-cbar"></canvas></div></div>
+        </div>
+
+        <!-- COMMITS PAGE -->
+        <div class="page" id="p-commits">
+          <div class="ptitle">Commit Activity</div><p class="psub">Commit frequency and trends</p>
+          <div class="mgrid" id="s-cmmtx"></div>
+          <div class="card" style="margin-bottom:13px"><div class="ct">Weekly Commits &mdash; Last 52 Weeks</div><div class="cw h260"><canvas id="c-cwk"></canvas></div></div>
+          <div class="card"><div class="ct">Monthly Trend</div><div class="cw h200"><canvas id="c-cmo"></canvas></div></div>
+        </div>
+
+        <!-- ISSUES PAGE -->
+        <div class="page" id="p-issues">
+          <div class="ptitle">Issue Analysis</div><p class="psub">Issue tracking and resolution metrics</p>
+          <div class="mgrid" id="s-imtx"></div>
+          <div class="g2">
+            <div class="card"><div class="ct">Resolution Ratio</div><div id="s-irat"></div><div class="cw h180"><canvas id="c-idng"></canvas></div></div>
+            <div class="card"><div class="ct">Issue Statistics</div><div class="slist" id="s-istat"></div></div>
+          </div>
+        </div>
+
+        <!-- AI PAGE -->
+        <div class="page" id="p-ai">
+          <div class="ptitle">AI Repository Summary</div><p class="psub">AI-generated insights, strengths, weaknesses and recommendations</p>
+          <div id="s-aifull"></div>
+        </div>
+
+        <!-- README PAGE -->
+        <div class="page" id="p-readme">
+          <div class="ptitle">README Analysis</div><p class="psub">Documentation quality assessment</p>
+          <div id="s-rdme"></div>
+        </div>
+
+        <!-- COMMUNITY PAGE -->
+        <div class="page" id="p-community">
+          <div class="ptitle">Community Analysis</div><p class="psub">Engagement, diversity and popularity</p>
+          <div id="s-comm"></div>
+        </div>
+
+        <!-- MAINTENANCE PAGE -->
+        <div class="page" id="p-maintenance">
+          <div class="ptitle">Maintenance Analysis</div><p class="psub">Release history and maintenance consistency</p>
+          <div id="s-maint"></div>
+        </div>
+
+        <!-- COMPARE PAGE -->
+        <div class="page" id="p-compare">
+          <div class="ptitle">Compare Repositories</div><p class="psub">Side-by-side comparison</p>
+          <div class="cmp-add">
+            <div class="cmp-field"><input type="text" id="cmpIn" placeholder="owner/repository to compare..."/></div>
+            <button class="btn-go" style="padding:8px 13px;font-size:13px" onclick="addCmp()">+ Add</button>
+          </div>
+          <div class="cmp-grid" id="s-cmpg"></div>
+        </div>
+
+        <!-- HISTORY PAGE -->
+        <div class="page" id="p-history">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px">
+            <div><div class="ptitle">Analysis History</div><p class="psub" style="margin-bottom:0">Previously analyzed repositories</p></div>
+            <button class="btn-xs" onclick="clearHist()">Clear All</button>
+          </div>
+          <div id="s-hist"></div>
+        </div>
+
+        <!-- SETTINGS PAGE -->
+        <div class="page" id="p-settings">
+          <div class="ptitle">Settings</div><p class="psub">Customize your experience</p>
+          <div id="s-sets"></div>
+        </div>
+
+      </div><!-- /vDash -->
+    </main>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+
+  <!-- Custom Core Logic Script -->
+  <script src="app.js"></script>
+</body>
+</html>
