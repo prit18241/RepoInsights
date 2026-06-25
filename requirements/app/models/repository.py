@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
-# ── REPOSITORY VALIDATION SCHEMA (Pydantic Model) ──
-# Yeh class GitHub se aane wale dynamic data ko automatic format aur check karegi
+# REPOSITORY VALIDATION SCHEMA (Pydantic Model) 
 class RepositoryResponse(BaseModel):
     id: int
     name: str

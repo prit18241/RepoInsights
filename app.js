@@ -252,6 +252,14 @@ function mkDng(id) {
   CH[id]=new Chart(c,{type:'doughnut',data:{labels:sorted,datasets:[{data:data,backgroundColor:sorted.map(function(_,i){return LC[i%LC.length];}),borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.parsed+'%';}}}}}});
 }
 
+// ── HOME PAGE NAVIGATION ROUTINE ──────────────────────────────────────────────
+function goHome() {
+  document.querySelectorAll('.nb').forEach(function(b) { b.classList.remove('on'); });
+  D = null;
+  var inp = document.getElementById('ri'); if (inp) inp.value = '';
+  showView('vLand');
+}
+
 function rCtbs() {
   var c = D.ctbs, max = c.length?c[0].contributions:1, tot = c.reduce(function(s,x){return s+x.contributions;},0), targetCmtx = document.getElementById('s-cmtx');
   if (targetCmtx) targetCmtx.innerHTML = mc('&#128101;','Total',fN(D.totalC),'All time','cbl')+mc('&#127942;','Top',c.length?c[0].login:'N/A',c.length?fN(c[0].contributions)+' commits':'','cyl')+mc('&#128221;','Tracked',c.length,'Top contributors','cgr')+mc('&#9889;','Bus Factor',c.length<3?'High Risk':c.length<8?'Moderate':'Low','',c.length<3?'crd':c.length<8?'cor':'cgr');

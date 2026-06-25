@@ -6,7 +6,7 @@ from api.routes.repository import router as repository_router
 from api.routes.history import router as history_router
 from database.database import Base, engine
 
-# 1. Database Tables Initialization (Agar table nahi bani toh automatic SQLite me bana dega)
+# 1. Database Tables Initialization
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -14,18 +14,18 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 2. CORS MIDDLEWARE SETUP (Sabse Zaroori Fix)
-# Yeh browser ko permission dega taaki aapki index.html bina kisi error ke backend se connect ho sake
+# 2. CORS MIDDLEWARE SETUP 
+# This will grant the browser permission so that your index.html can connect to the backend without any errors.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Local testing ke liye saare origins allowed hain
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"], # GET, POST, OPTIONS saare requests allowed hain
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # 3. ROUTERS ASSEMBLE 
-# /api prefix lagana standard practice hai taaki frontend routes clear rahein
+# Adding an API prefix is ​​standard practice to keep frontend routes clear.
 app.include_router(
     repository_router,
     prefix="/api/repository",

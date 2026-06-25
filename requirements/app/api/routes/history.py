@@ -5,7 +5,7 @@ from models.history import History
 router = APIRouter()
 
 # ── DATABASE DEPENDENCY CRADLE ──
-# Yeh function automatic connection open aur close karne ka dhyan rakhega
+# use for connection open and close
 def get_db():
     db = SessionLocal()
     try:
@@ -15,10 +15,9 @@ def get_db():
 
 @router.get("/")
 def get_history(db=Depends(get_db)):
-    # 1. Database se saari history fetch karein
+    # use for data base history fetching
     history = db.query(History).all()
     
-    # 2. Python shorthand loop se data object return karein (Easy & Fast)
     return [
         {
             "id": item.id,

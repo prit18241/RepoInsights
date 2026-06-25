@@ -4,7 +4,7 @@ class HealthScoreService:
 
     @staticmethod
     def calculate_activity(commits):
-        # 1. Edge-case safety guard (Agar commits array khali ho)
+       # 1. Edge-case safety guard (if the commits array is empty)
         if not commits or len(commits) == 0:
           return {
               "activity_status": "Abandoned",
@@ -14,7 +14,7 @@ class HealthScoreService:
         try:
             # GitHub API payload structure safe extract check
             latest_commit = commits[0]
-            # Agar dictionary raw wrapper me ho toh check karein
+           # Check if the dictionary is in a raw wrapper.
             if "date" not in latest_commit and "commit" in latest_commit:
                 latest_commit_date = latest_commit["commit"]["author"]["date"]
             else:
@@ -27,7 +27,7 @@ class HealthScoreService:
             now = datetime.now(timezone.utc)
             days_since_last_commit = (now - latest_date).days
             
-            # Static metrics definitions mapping to frontend strings matching
+          # Static metrics definitions mapping to frontend strings matching
             if days_since_last_commit <= 7:
                 status = "Very Active"
             elif days_since_last_commit <= 30:
@@ -86,7 +86,7 @@ class HealthScoreService:
             score += 5
 
         # Dimension 5: Legal Compliance Integration (Max 10) -> Math Fixes to hit 100/100 max boundary!
-        # Agar repository me proper open-source license setup hai toh +10 bonus points
+       # +10 bonus points if the repository has a proper open-source license set up.
         if repository.get("license") or repository.get("license_id"):
             score += 10
 

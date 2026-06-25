@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <title>Repo Insight - GitHub Repository Analytics Tool</title>
 
 <meta name="description"
@@ -8,10 +9,10 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
    <link rel="icon" type="image/png" href="/git_logo.png">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9114880068118963"
      crossorigin="anonymous"></script>
-   <meta charset="UTF-8"/>
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ 
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js dependency -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -33,6 +34,7 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
   <div class="app-body">
     <nav class="sbar">
       <div class="ng">Repository</div>
+      <button class="nb" id="n-home" onclick="goHome()"><span class="nb-ic">🏠</span> Home</button>
       <button class="nb on" id="n-overview" onclick="nav('overview')"><span class="nb-ic">&#9783;</span> Overview</button>
       <button class="nb" id="n-health" onclick="nav('health')"><span class="nb-ic">&#10084;</span> Health Score</button>
       
@@ -60,7 +62,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
 
     <main class="main" id="mainArea">
 
-      <!-- LANDING VIEW -->
       <div class="view active" id="vLand">
         <div class="hero">Analyze any GitHub Repository</div>
         <p class="hero-sub">Health scores, AI summaries, language breakdowns, contributor rankings &mdash; powered by the GitHub API.</p>
@@ -81,23 +82,19 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
         </div>
       </div>
 
-      <!-- LOADING VIEW -->
       <div class="view" id="vLoad">
         <div class="spin"></div>
         <div class="lsteps" id="lsteps"></div>
       </div>
 
-      <!-- ERROR VIEW -->
       <div class="view" id="vErr">
         <div class="err-ico">&#9888;</div>
         <div class="err-ttl" id="etitle">Repository Not Found</div>
         <p class="err-msg" id="emsg">Check the repository name and try again.</p>
       </div>
 
-      <!-- DASHBOARD VIEW CONTAINER -->
       <div class="view" id="vDash">
 
-        <!-- OVERVIEW PAGE -->
         <div class="page active" id="p-overview">
           <div id="s-rhdr"></div>
           <div class="mgrid" id="s-omtx"></div>
@@ -108,7 +105,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           <div class="card" id="s-aiov"></div>
         </div>
 
-        <!-- HEALTH PAGE -->
         <div class="page" id="p-health">
           <div class="ptitle">Health Score</div><p class="psub">Repository health across 5 key dimensions</p>
           <div class="card"><div id="s-hmain"></div></div>
@@ -119,7 +115,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           <div class="card"><div class="ct">Activity Status</div><div id="s-actst"></div></div>
         </div>
 
-        <!-- LANGUAGES PAGE -->
         <div class="page" id="p-languages">
           <div class="ptitle">Language Analysis</div><p class="psub">Code composition and distribution</p>
           <div class="g2">
@@ -128,7 +123,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           </div>
         </div>
 
-        <!-- CONTRIBUTORS PAGE -->
         <div class="page" id="p-contributors">
           <div class="ptitle">Contributor Analysis</div><p class="psub">Who is building this repository</p>
           <div class="mgrid" id="s-cmtx"></div>
@@ -141,7 +135,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           <div class="card"><div class="ct">Contributions Chart</div><div class="cw h200"><canvas id="c-cbar"></canvas></div></div>
         </div>
 
-        <!-- COMMITS PAGE -->
         <div class="page" id="p-commits">
           <div class="ptitle">Commit Activity</div><p class="psub">Commit frequency and trends</p>
           <div class="mgrid" id="s-cmmtx"></div>
@@ -149,7 +142,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           <div class="card"><div class="ct">Monthly Trend</div><div class="cw h200"><canvas id="c-cmo"></canvas></div></div>
         </div>
 
-        <!-- ISSUES PAGE -->
         <div class="page" id="p-issues">
           <div class="ptitle">Issue Analysis</div><p class="psub">Issue tracking and resolution metrics</p>
           <div class="mgrid" id="s-imtx"></div>
@@ -159,31 +151,26 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           </div>
         </div>
 
-        <!-- AI PAGE -->
         <div class="page" id="p-ai">
           <div class="ptitle">AI Repository Summary</div><p class="psub">AI-generated insights, strengths, weaknesses and recommendations</p>
           <div id="s-aifull"></div>
         </div>
 
-        <!-- README PAGE -->
         <div class="page" id="p-readme">
           <div class="ptitle">README Analysis</div><p class="psub">Documentation quality assessment</p>
           <div id="s-rdme"></div>
         </div>
 
-        <!-- COMMUNITY PAGE -->
         <div class="page" id="p-community">
           <div class="ptitle">Community Analysis</div><p class="psub">Engagement, diversity and popularity</p>
           <div id="s-comm"></div>
         </div>
 
-        <!-- MAINTENANCE PAGE -->
         <div class="page" id="p-maintenance">
           <div class="ptitle">Maintenance Analysis</div><p class="psub">Release history and maintenance consistency</p>
           <div id="s-maint"></div>
         </div>
 
-        <!-- COMPARE PAGE -->
         <div class="page" id="p-compare">
           <div class="ptitle">Compare Repositories</div><p class="psub">Side-by-side comparison</p>
           <div class="cmp-add">
@@ -193,7 +180,6 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           <div class="cmp-grid" id="s-cmpg"></div>
         </div>
 
-        <!-- HISTORY PAGE -->
         <div class="page" id="p-history">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px">
             <div><div class="ptitle">Analysis History</div><p class="psub" style="margin-bottom:0">Previously analyzed repositories</p></div>
@@ -202,19 +188,16 @@ content="Analyze GitHub repositories with stars, forks, contributors, issues and
           <div id="s-hist"></div>
         </div>
 
-        <!-- SETTINGS PAGE -->
         <div class="page" id="p-settings">
           <div class="ptitle">Settings</div><p class="psub">Customize your experience</p>
           <div id="s-sets"></div>
         </div>
 
-      </div><!-- /vDash -->
-    </main>
+      </div></nav>
   </div>
 
   <div class="toast" id="toastEl"></div>
 
-  <!-- Custom Core Logic Script -->
-  <script src="app.js"></script>
+  <script src="app.js"></script>  
 </body>
 </html>

@@ -7,7 +7,7 @@ load_dotenv()
 class GitHubService:
     BASE_URL = "https://api.github.com"
     
-    # 1. Environment variables se GitHub Token read karein (Secure API calls)
+    # 1. Read GitHub token from environment variables (secure API calls)
     TOKEN = os.getenv("GITHUB_TOKEN") 
     HEADERS = {
         "Accept": "application/vnd.github+json",
@@ -58,14 +58,14 @@ class GitHubService:
                 return []
             
             contributors = response.json()
-            # Direct flat array return kar rahe hain taaki repository.py me format break na ho
+            # Returning a flat array directly to avoid breaking the format in repository.py
             return [
                 {
                     "username": c.get("login"),
                     "contributions": c.get("contributions", 0),
                     "avatar_url": c.get("avatar_url")
                 }
-                for c in contributors[:15] # Top 15 contributors select kiye dashboard charts ke liye
+                for c in contributors[:15]# Top 15 contributors selected for dashboard charts
             ]
         except Exception:
             return []
@@ -76,10 +76,10 @@ class GitHubService:
         try:
             response = requests.get(url, headers=GitHubService.HEADERS)
             if response.status_code != 200:
-                return [] # Wrapper hata kar direct khali array
+                return [] # Remove the wrapper and use the raw array directly.
             
             commits = response.json()
-            # Direct flat list return kar rahe hain bina "commits" wrapper object ke
+            # Direct flat list return without "commits" wrapper object
             return [
                 {
                     "author": commit.get("commit", {}).get("author", {}).get("name", "Unknown"),
@@ -89,4 +89,4 @@ class GitHubService:
                 for commit in commits[:26]
             ]
         except Exception:
-            return [] # Backup khali list
+            return [] #Backup Empty List

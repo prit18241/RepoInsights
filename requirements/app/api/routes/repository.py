@@ -7,11 +7,10 @@ from services.history_service import HistoryService
 
 router = APIRouter()
 
-# ── SINGLE SHOT COMPREHENSIVE ANALYSIS ENDPOINT ──
-# Frontend ko har cheez ke liye alag alag call nahi karni padegi, ek call me sab milega!
+# SINGLE SHOT COMPREHENSIVE ANALYSIS ENDPOINT
 @router.get("/{owner}/{repo}/analyze")
 def analyze_repository(owner: str, repo: str):
-    # 1. GitHub Service se saara raw data fetch karein
+    # 1. use for fatching repository data, contributors, commits, languages
     repository = GitHubService.get_repository(owner, repo)
     contributors = GitHubService.get_contributors(owner, repo)
     commits_data = GitHubService.get_commits(owner, repo)
@@ -31,7 +30,7 @@ def analyze_repository(owner: str, repo: str):
     risk = RiskService.calculate_risk(health_score)
     risk_level = risk.get("risk_level", "Unknown")
 
-    # 3. History module me database record background save karein
+    # 3. Save to History (Database)
     HistoryService.save_history(
         owner=owner,
         repo=repo,
@@ -61,8 +60,7 @@ def analyze_repository(owner: str, repo: str):
         "ai_summary": ai_summary
     }
 
-# ── STANDARD GRANULAR PASS-THROUGH ENDPOINTS ──
-# Agar aapko future extension ke liye single operations chahiye hon toh:
+# STANDARD GRANULAR PASS-THROUGH ENDPOINTS
 @router.get("/{owner}/{repo}")
 def get_repository_base(owner: str, repo: str):
     return GitHubService.get_repository(owner, repo)

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# 1. API Configuration global level par ek baar set karein (Super Fast)
+# 1. set API Configuration at global level
 api_key = os.getenv("GENAI_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
@@ -20,8 +20,7 @@ class AISummaryService:
         stars,
         open_issues
     ):
-        # 2. Modern Time timezone safe lightweight engine configure karein
-        # 'gemini-1.5-flash' bohot tez hai aur iski cost lagbhag zero hai
+        # 2. Modern Time timezone safe lightweight engine configureation
         model = genai.GenerativeModel("gemini-1.5-flash")
         
         prompt = f"""
@@ -44,13 +43,13 @@ class AISummaryService:
         """
         
         try:
-            # 3. List models loop hata diya, ab direct fetch hoga instantly
+            # 3. Removed the list models loop, fetching will now happen directly and instantly.
             response = model.generate_content(prompt)
             return {
                 "summary": response.text.strip()
             }
         except Exception as e:
-            # 4. Fallback handler ready format me data return karega
+            # 4. Fallback handler will return data in ready format
             print(f"Gemini API Error Log: {str(e)}") # Debugging helper log
             return {
                 "summary": f"Repository '{repository_name}' has a health score of {health_score}/100 and a risk level of {risk_level}. (Note: AI service is temporarily offline, showing fallback analysis based on raw metrics)."
